@@ -1,0 +1,41 @@
+{
+  "name": "APP Name",
+  "displayName": "APP Name",
+  "expo": {
+    "name": "APP Name",
+    "slug": "appname",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash.png",
+      "backgroundColor": "#fff"
+    },
+    "version": "1.0.2",
+    "orientation": "portrait",
+    "platforms": ["ios", "android", "web"],
+    "assetBundlePatterns": ["**/*"],
+    "userInterfaceStyle": "light",
+    "ios": {
+      "config": {
+        "usesNonExemptEncryption": false
+      },
+      "bundleIdentifier": "appname",
+      "userInterfaceStyle": "light",
+      "infoPlist": {
+        "UIUserInterfaceStyle": "light",
+        "UIBackgroundModes": ["audio"],
+        "config": {
+          "usesNonExemptEncryption": false
+        }
+      },
+      "supportsTablet": true
+    },
+    "android": {
+      "package": "com.appname.app",
+      "userInterfaceStyle": "light",
+      "permissions": [],
+      "versionCode": 2
+    },
+    "entryPoint": "node_modules/expo/AppEntry.js",
+    "description": "APP Name"
+  }
+}
