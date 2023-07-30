@@ -105,7 +105,7 @@ export default function App() {
 
   return (
     <>
-      <StatusBar barStyle="light-content" />
+      <StatusBar barStyle="dark-content" />
       <View style={styles.container}>
         <Spinner
           visible={isLoading}
