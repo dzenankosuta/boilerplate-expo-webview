@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   DevSettings,
   BackHandler,
+  Alert,
 } from "react-native";
 import { WebView } from "react-native-webview";
 import Spinner from "react-native-loading-spinner-overlay";
@@ -20,7 +21,7 @@ const Error = ({ name }) => (
   <Overlay isVisible={true} fullScreen={true}>
     <View style={styles.container}>
       <Text style={styles.errorText}>
-        Morate imati pristup internetu kako bi koristili ovu aplikaciju.
+        You must be connected to the internet to use this app.
       </Text>
       <TouchableOpacity
         style={styles.retryButton}
@@ -28,7 +29,7 @@ const Error = ({ name }) => (
           DevSettings.reload();
         }}
       >
-        <Text style={styles.retryButtonText}>Pokušaj ponovo</Text>
+        <Text style={styles.retryButtonText}>Try again</Text>
       </TouchableOpacity>
     </View>
   </Overlay>
@@ -36,7 +37,13 @@ const Error = ({ name }) => (
 
 export default function App() {
   const webViewRef = useRef(null);
+  const webURL = "https://www.arsenal.com/";
   const [isLoading, setIsLoading] = useState(true);
+  const [currentUrl, setCurrentUrl] = useState("");
+
+  const handleNavigationStateChange = (navState) => {
+    setCurrentUrl(navState.url);
+  };
 
   useEffect(() => {
     async function permissionAsync() {
@@ -51,7 +58,7 @@ export default function App() {
   useEffect(() => {
     const hardwareBackPressListener = () => {
       webViewRef.current.goBack();
-      return true; // Vraćamo true da sprečimo default handling
+      return true;
     };
     const backHandler = BackHandler.addEventListener(
       "hardwareBackPress",
@@ -59,7 +66,7 @@ export default function App() {
     );
 
     return () => {
-      backHandler.remove(); // Uklanjamo event listener kada komponenta bude unmount-ovana
+      backHandler.remove();
     };
   }, []);
 
@@ -70,6 +77,32 @@ export default function App() {
     }
   };
 
+  useEffect(() => {
+    const backAction = () => {
+      if (currentUrl === webURL) {
+        Alert.alert("Hold up!", "Are you sure you want to exit the app?", [
+          {
+            text: "Cancel",
+            onPress: () => null,
+            style: "cancel",
+          },
+          { text: "Yes", onPress: () => BackHandler.exitApp() },
+        ]);
+        return true;
+      } else {
+        webViewRef.current.goBack();
+        return true;
+      }
+    };
+
+    const backHandler = BackHandler.addEventListener(
+      "hardwareBackPress",
+      backAction
+    );
+
+    return () => backHandler.remove();
+  }, [currentUrl]);
+
   return (
     <>
       <StatusBar barStyle="light-content" />
@@ -77,13 +110,13 @@ export default function App() {
         <Spinner
           visible={isLoading}
           textStyle={styles.spinnerTextStyle}
-          color="#92623c"
+          color="#3498db"
           overlayColor="#fff"
         />
 
         <WebView
           ref={webViewRef}
-          source={{ uri: "https://www.youtube.com/" }}
+          source={{ uri: webURL }}
           style={styles.webView}
           javaScriptEnabled={true}
           allowsFullscreenVideo={true}
@@ -92,6 +125,7 @@ export default function App() {
           scalesPageToFit={false}
           automaticallyAdjustContentInsets={false}
           onLoadProgress={handleLoadProgress}
+          onNavigationStateChange={handleNavigationStateChange}
           injectedJavaScript={jsCode}
           injectedJavaScriptBeforeContentLoadedForMainFrameOnly={false}
           injectedJavaScriptForMainFrameOnly={false}
@@ -110,12 +144,12 @@ const styles = StyleSheet.create({
   errorText: {
     textAlign: "center",
     fontWeight: "bold",
-    color: "#92623c",
+    color: "#3498db",
   },
   retryButton: {
     marginTop: 20,
     marginHorizontal: 50,
-    backgroundColor: "#92623c",
+    backgroundColor: "#3498db",
     flexDirection: "row",
     justifyContent: "center",
     borderRadius: 5,
@@ -127,7 +161,7 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
   spinnerTextStyle: {
-    color: "#92623c",
+    color: "#3498db",
   },
   webView: {
     flex: 1,
